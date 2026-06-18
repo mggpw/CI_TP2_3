@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seminario Nivelatorio de Matemática — TP N°2 y N°3</title>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.28.4/babel.min.js"></script>
+<style>
+  * { box-sizing: border-box; }
+  h1, h2, h3, p, ul, ol { margin: 0; padding: 0; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: #0a1628;
+    color: #cbd5e1;
+  }
+  button, input { font-family: inherit; }
+  a { color: inherit; }
+
+  .page { min-height: 100vh; padding: 16px; }
+  @media (min-width: 768px) { .page { padding: 32px; } }
+  .container { max-width: 880px; margin: 0 auto; }
+
+  .header-banner { background: linear-gradient(135deg, #0d2137, #1a3a5c, #0d2137); border-radius: 16px; padding: 20px; margin-bottom: 16px; color: #ffffff; }
+  .header-tag { font-size: 14px; font-weight: 500; opacity: 0.9; }
+  .header-title { font-size: 26px; font-weight: 700; margin-top: 6px; }
+  .header-sub { opacity: 0.9; margin-top: 6px; font-size: 14px; }
+  .stats-row { display: flex; gap: 12px; margin-top: 16px; flex-wrap: wrap; }
+  .stat-pill { background: rgba(255,255,255,0.15); border-radius: 12px; padding: 8px 16px; text-align: center; min-width: 80px; }
+  .stat-big { font-size: 18px; font-weight: 700; }
+  .stat-label { font-size: 12px; opacity: 0.8; }
+
+  .score-card { background: linear-gradient(135deg, #0a2e2a, #0a1f35); border: 1px solid #1e3a55; border-radius: 16px; padding: 16px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
+  .score-left { display: flex; align-items: center; gap: 12px; }
+  .lightning { font-size: 24px; }
+  .score-points { font-size: 20px; font-weight: 700; color: #f1f5f9; }
+  .score-sub { font-size: 12px; color: #94a3b8; margin-top: 2px; }
+  .progress-wrap { display: flex; align-items: center; gap: 12px; flex: 1; max-width: 280px; }
+  .progress-track { flex: 1; height: 8px; background-color: #1e3a55; border-radius: 999px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, #00d4aa, #3b82f6); border-radius: 999px; }
+  .progress-pct { font-size: 14px; color: #94a3b8; width: 40px; }
+  .btn-reset { display: flex; align-items: center; gap: 6px; font-size: 13px; padding: 10px 22px; border-radius: 12px; background: transparent; border: 2px solid #00d4aa; color: #00d4aa; text-transform: uppercase; font-weight: 700; letter-spacing: 0.03em; cursor: pointer; }
+  .btn-reset:hover { background-color: rgba(0,212,170,0.12); }
+
+  .tabs-row { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+  .tab-btn { padding: 10px 16px; border-radius: 10px; font-weight: 500; font-size: 14px; cursor: pointer; border: none; }
+  .tab-active { background-color: #00d4aa; color: #0a1628; }
+  .tab-inactive { background-color: #0d2137; border: 1px solid #1e3a55; color: #94a3b8; }
+
+  .exercise-block { margin-bottom: 24px; }
+  .exercise-header { width: 100%; display: flex; align-items: center; gap: 12px; background-color: #0d2137; border: 1px solid #1e3a55; border-radius: 16px; padding: 12px 16px; cursor: pointer; text-align: left; }
+  .exercise-header:hover { opacity: 0.9; }
+  .exercise-number { background: linear-gradient(135deg, #00d4aa, #3b82f6); color: #fff; width: 36px; height: 36px; border-radius: 999px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; flex-shrink: 0; }
+  .exercise-title-wrap { flex: 1; }
+  .exercise-title { font-weight: 700; color: #f1f5f9; font-size: 16px; }
+  .exercise-subtitle { font-size: 12px; color: #94a3b8; margin-top: 2px; }
+  .exercise-body { margin-top: 12px; }
+
+  .story-card { background-color: #2e2410; border: 1px solid #4a3920; color: #d4c5a0; border-radius: 16px; padding: 16px; margin-bottom: 16px; }
+  .story-text { font-size: 14px; line-height: 1.6; margin-bottom: 12px; }
+  .story-list { list-style: none; margin: 12px 0; font-size: 14px; line-height: 1.6; }
+  .story-list li { margin-bottom: 6px; }
+  .story-callout { background-color: #3d2f12; border: 1px solid #5c4820; border-radius: 12px; padding: 12px; margin: 16px 0; }
+  .mission-label { color: #fbbf24; font-weight: 600; font-size: 14px; }
+  .equation-box { background-color: #1f1a0d; border: 1px solid #4a3920; color: #fde68a; text-align: center; font-family: monospace; font-size: 18px; font-weight: 600; border-radius: 12px; padding: 10px; margin: 8px 0; }
+  .steps-list { margin-top: 4px; padding-left: 18px; font-size: 14px; }
+  .steps-list li { margin-bottom: 4px; }
+
+  .q-card { background-color: #0d2137; border: 1px solid #1e3a55; border-radius: 12px; padding: 16px; margin-bottom: 12px; }
+  .q-prompt { font-weight: 500; color: #e2e8f0; margin-bottom: 12px; }
+  .options-list { display: flex; flex-direction: column; gap: 8px; }
+  .option-btn { width: 100%; text-align: left; padding: 10px 12px; border-radius: 10px; cursor: pointer; font-size: 14px; }
+  .opt-default { background-color: #0a1f35; border: 2px solid #1e3a55; color: #cbd5e1; }
+  .opt-default:hover { background-color: #0d2a45; }
+  .opt-selected { background-color: #0d2a45; border: 2px solid #00d4aa; color: #e2e8f0; }
+  .opt-correct { background-color: #0a2e1a; border: 2px solid #4ade8055; color: #86efac; }
+  .opt-incorrect { background-color: #2e0a0a; border: 2px solid #f8717155; color: #fca5a5; }
+  .opt-dim { background-color: #0a1f35; border: 2px solid #1e3a55; color: #475569; }
+  .btn-row { margin-top: 12px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .btn-primary { padding: 10px 24px; border-radius: 12px; font-size: 14px; background: linear-gradient(90deg, #00d4aa, #3b82f6); color: #fff; border: none; text-transform: uppercase; font-weight: 700; letter-spacing: 0.03em; cursor: pointer; }
+  .btn-primary:hover { filter: brightness(1.08); }
+  .btn-primary:disabled { opacity: 0.35; cursor: not-allowed; filter: none; }
+  .feedback { display: flex; align-items: center; gap: 6px; font-size: 14px; }
+  .feedback-ok { color: #34d399; }
+  .feedback-bad { color: #f87171; }
+  .explain-text { margin-top: 8px; font-size: 14px; color: #94a3b8; }
+
+  .toggle-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+  .toggle-btn { padding: 8px 14px; border-radius: 10px; font-size: 14px; font-weight: 500; cursor: pointer; }
+  .tg-off { background-color: #0a1f35; border: 2px solid #1e3a55; color: #cbd5e1; }
+  .tg-off:hover { background-color: #0d2a45; }
+  .tg-active { background-color: #00d4aa; border: 2px solid #00d4aa; color: #0a1628; }
+  .tg-correct-on { background-color: #0a2e1a; border: 2px solid #4ade8055; color: #86efac; }
+  .tg-correct-off { background-color: #0a1f35; border: 2px dashed #4ade8055; color: #86efac; }
+  .tg-wrong-on { background-color: #2e0a0a; border: 2px solid #f8717155; color: #fca5a5; }
+  .tg-dim { background-color: #0a1f35; border: 2px solid #1e3a55; color: #475569; }
+  .set-label { font-size: 20px; font-weight: 600; color: #f1f5f9; }
+
+  .input-card { border-radius: 12px; padding: 16px; margin-bottom: 12px; }
+  .ic-default { background-color: #0a1f35; border: 1px solid #1e3a55; }
+  .ic-correct { background-color: #0a2e1a; border: 1px solid #4ade8055; }
+  .ic-incorrect { background-color: #2e0a0a; border: 1px solid #f8717155; }
+  .eq-prompt { font-family: monospace; color: #e2e8f0; font-size: 18px; margin-bottom: 8px; }
+  .input-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .text-input { background-color: #0d2137; border: 2px solid #1e3a55; color: #e2e8f0; border-radius: 10px; padding: 8px 12px; width: 210px; font-size: 14px; }
+  .text-input:focus { border-color: #00d4aa; outline: none; }
+  .ti-correct { background-color: #0d2e17; }
+  .ti-incorrect { background-color: #2e1515; }
+  .input-feedback { margin-top: 12px; display: flex; align-items: flex-start; gap: 8px; font-size: 14px; }
+
+  .footer { margin-top: 40px; padding-top: 24px; border-top: 1px solid #1e3a55; }
+  .footer-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .icon-badge { background: linear-gradient(135deg, #00d4aa, #3b82f6); width: 44px; height: 44px; border-radius: 999px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+  .footer-title { font-size: 24px; font-weight: 700; color: #f1f5f9; }
+  .footer-card { background-color: #0d2137; border: 1px solid #1e3a55; border-radius: 16px; padding: 16px; display: flex; align-items: center; gap: 16px; }
+  .icon-sm { width: 40px; height: 40px; border-radius: 999px; background-color: #0a1f35; display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
+  .footer-email { font-weight: 700; font-size: 15px; color: #00d4aa; text-decoration: none; }
+  .footer-email:hover { text-decoration: underline; }
+  .footer-cat { font-size: 13px; color: #94a3b8; margin-top: 4px; }
+  .footer-bottom { text-align: center; font-size: 12px; color: #64748b; margin-top: 16px; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState } = React;
+
+// ---------- Iconos (SVG simples, sin dependencias) ----------
+
+function IconCheck({ size = 16 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10" />
+      <path d="M8 12l2.5 2.5L16 9" />
+    </svg>
+  );
+}
+function IconX({ size = 16 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10" />
+      <path d="M15 9l-6 6M9 9l6 6" />
+    </svg>
+  );
+}
+function IconChevronDown({ size = 20 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M6 9l6 6 6-6" />
+    </svg>
+  );
+}
+function IconChevronUp({ size = 20 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M18 15l-6-6-6 6" />
+    </svg>
+  );
+}
+function IconRotate({ size = 14 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M3 12a9 9 0 1 0 3-6.7" />
+      <path d="M3 4v5h5" />
+    </svg>
+  );
+}
+
+// ---------- Datos: TP N°2 ----------
+
+const clasifItems = [
+  { id: "c1", label: "0", sets: ["Z", "Q", "R"] },
+  { id: "c2", label: "−5", sets: ["Z", "Q", "R"] },
+  { id: "c3", label: "−2/5", sets: ["Q", "R"] },
+  { id: "c4", label: "√25", sets: ["N", "Z", "Q", "R"] },
+  { id: "c5", label: "−3/2", sets: ["Q", "R"] },
+  { id: "c6", label: "π", sets: ["I", "R"] },
+  { id: "c7", label: "8/4", sets: ["N", "Z", "Q", "R"] },
+  { id: "c8", label: "−8/3", sets: ["Q", "R"] },
+  { id: "c9", label: "e", sets: ["I", "R"] },
+  { id: "c10", label: "−√36", sets: ["Z", "Q", "R"] },
+];
+
+const vfItems = [
+  { id: "vf1", prompt: "x³ · x² = x⁶", correct: false, explain: "Al multiplicar potencias de igual base se SUMAN los exponentes: x³·x² = x⁵, no x⁶." },
+  { id: "vf2", prompt: "x · x · x · x · x = 5x", correct: false, explain: "Multiplicar x por sí mismo 5 veces es x⁵ (una potencia), no 5x (que sería sumar 5 veces el valor de x)." },
+  { id: "vf3", prompt: "(a² · a)³ = a⁹", correct: true, explain: "a²·a = a³, y (a³)³ = a⁹. Correcto." },
+  { id: "vf4", prompt: "√(c + d) = √c + √d", correct: false, explain: "La radicación no es distributiva respecto de la suma." },
+  { id: "vf5", prompt: "√(b⁵) = b^(5/2)", correct: false, explain: "La propiedad exige que, si el índice es par, la base sea no negativa; como no se aclara que b sea no negativo, no puede afirmarse en general." },
+  { id: "vf6", prompt: "√(x²) = x", correct: false, explain: "√(x²) = |x|, no x. Si x es negativo, el resultado de la raíz (siempre no negativo) no puede ser igual a x." },
+];
+
+const intervalItems = [
+  { id: "iv1", prompt: "[−3 ; 5]", options: ["Abierto", "Cerrado", "Semiabierto a izquierda", "Semiabierto a derecha"], correct: 1 },
+  { id: "iv2", prompt: "(−2 ; 4)", options: ["Semiabierto a derecha", "Cerrado", "Abierto", "Semiabierto a izquierda"], correct: 2 },
+  { id: "iv3", prompt: "(1 ; 7]", options: ["Cerrado", "Semiabierto a derecha", "Abierto", "Semiabierto a izquierda"], correct: 3 },
+  { id: "iv4", prompt: "[−1 ; 3)", options: ["Cerrado", "Abierto", "Semiabierto a derecha", "Semiabierto a izquierda"], correct: 2 },
+];
+
+const notacionItems = [
+  { id: "nc1", prompt: "Duración de un año: 31 560 000 s", options: ["31,56 x 10^6 s", "3,156 x 10^6 s", "3,156 x 10^7 s", "3,156 x 10^8 s"], correct: 2 },
+  { id: "nc2", prompt: "Velocidad de la luz: 299 792,4 km/s", options: ["2,997924 x 10^4 km/s", "29,97924 x 10^4 km/s", "2,997924 x 10^6 km/s", "2,997924 x 10^5 km/s"], correct: 3 },
+  { id: "nc3", prompt: "Masa del Sol: 1 989 000 000 000 000 000 000 000 000 000 000 g", options: ["1,989 x 10^32 g", "19,89 x 10^32 g", "1,989 x 10^33 g", "1,989 x 10^34 g"], correct: 2 },
+  { id: "nc4", prompt: "Un año luz: 9 460 500 000 000 km", options: ["9,4605 x 10^11 km", "94,605 x 10^11 km", "9,4605 x 10^13 km", "9,4605 x 10^12 km"], correct: 3 },
+  { id: "nc5", prompt: "Masa del electrón: 0,00000000000000000000000000000091096 kg", options: ["9,1096 x 10^-30 kg", "9,1096 x 10^31 kg", "9,1096 x 10^-32 kg", "9,1096 x 10^-31 kg"], correct: 3 },
+  { id: "nc6", prompt: "Radio del átomo de hidrógeno: 0,00000000529177 cm", options: ["5,29177 x 10^-8 cm", "5,29177 x 10^-10 cm", "5,29177 x 10^9 cm", "5,29177 x 10^-9 cm"], correct: 3 },
+];
+
+// ---------- Datos: TP N°3 ----------
+
+const terminosItems = [
+  { id: "t1", expr: "5x − 8x + 2x", options: ["x", "−x", "15x", "−5x"], correct: 1 },
+  { id: "t2", expr: "8xy − 2xy", options: ["10xy", "6xy", "−6xy", "6"], correct: 1 },
+  { id: "t3", expr: "6x − 4y + x − 5y", options: ["5x − 9y", "7x − 9y", "7x + 9y", "7x − y"], correct: 1 },
+  { id: "t4", expr: "3xy + 5x + 2xy − 8x", options: ["5xy + 3x", "xy − 3x", "5xy − 3x", "5xy − 13x"], correct: 2 },
+  { id: "t5", expr: "9 − 4x − 2 + 8x", options: ["4x + 11", "−4x + 7", "4x + 7", "12x + 7"], correct: 2 },
+  { id: "t6", expr: "x² − 6 − 4x² + 15", options: ["3x² + 9", "9 − 3x²", "−3x² − 9", "9 − 5x²"], correct: 1 },
+  { id: "t7", expr: "a + 8ab − 12ab", options: ["a + 4ab", "−4ab", "a − 4ab", "9a − 12ab"], correct: 2 },
+  { id: "t8", expr: "7ab − 4bc + 3ab", options: ["4ab − 4bc", "10ab + 4bc", "3ab − 4bc", "10ab − 4bc"], correct: 3 },
+  { id: "t9", expr: "6x² + 5x³ − 7x² + x", options: ["5x³ + 13x² + x", "−x³ − x² + x", "5x³ − x² + x", "5x³ − x² − x"], correct: 2 },
+  { id: "t10", expr: "6a²b − 4ab² − 12ab²", options: ["6a²b − 8ab²", "−6a²b − 16ab²", "2a²b − 16ab²", "6a²b − 16ab²"], correct: 3 },
+  { id: "t11", expr: "8cd² − 5c²d − 4c²d − 3cd²", options: ["5cd² + 9c²d", "11cd² + 9c²d", "5cd² − c²d", "5cd² − 9c²d"], correct: 3 },
+  { id: "t12", expr: "x + 3/x + 5x + 7/x", options: ["6x + 4/x", "10x + 10/x", "6x − 10/x", "6x + 10/x"], correct: 3 },
+];
+
+const linearItems = [
+  { id: "l1", eq: "5x + 3 = 37", value: 34 / 5, display: "34/5 (= 6,8)" },
+  { id: "l2", eq: "18 − 2x = 12", value: 3, display: "3" },
+  { id: "l3", eq: "10 − 2x = 15", value: -2.5, display: "−5/2 (= −2,5)" },
+  { id: "l4", eq: "2(13 − x) = 22", value: 2, display: "2" },
+  { id: "l5", eq: "9 − 4x − 2 + 8x = 0", value: -1.75, display: "−7/4 (= −1,75)" },
+  { id: "l6", eq: "6x − 3 = 5x + 4", value: 7, display: "7" },
+  { id: "l7", eq: "3x + 7 = 8 − 2x", value: 0.2, display: "1/5 (= 0,2)" },
+  { id: "l8", eq: "6 − 7x = 3 − 5x", value: 1.5, display: "3/2 (= 1,5)" },
+  { id: "l9", eq: "7 − x = 3(5 − x)", value: 4, display: "4" },
+  { id: "l10", eq: "3(3x − 2) − 7(x − 2) = 0", value: -4, display: "−4" },
+  { id: "l11", eq: "2x − 4 = 2x − 4", special: "todos" },
+  { id: "l12", eq: "3x + 5 = 3x + 8", special: "ninguna" },
+];
+
+const despejarItems = [
+  { id: "d1", prompt: "P = 2l + 2w  →  despejar w", options: ["w = P − 2l", "w = (P − 2l)/2", "w = (P + 2l)/2", "w = 2(P − l)"], correct: 1 },
+  { id: "d2", prompt: "F = G·m·M/r²  →  despejar m", options: ["m = F/(G·M·r²)", "m = F·G·r²/M", "m = F·r²/(G·M)", "m = F·M/(G·r²)"], correct: 2 },
+  { id: "d3", prompt: "P·V = n·R·T  →  despejar R", options: ["R = n·T/(P·V)", "R = P·V·T/n", "R = P·V/(n·T)", "R = P·V/n + T"], correct: 2 },
+  { id: "d4", prompt: "1/R = 1/R1 + 1/R2  →  despejar R1", options: ["R1 = R − R2", "R1 = (R·R2)/(R2 − R)", "R1 = (R·R2)/(R + R2)", "R1 = R + R2"], correct: 1 },
+];
+
+const quadItems = [
+  { id: "q1", eq: "x² + 5x = 0", values: [0, -5], display: "x1 = 0  ;  x2 = −5" },
+  { id: "q2", eq: "x² − 16 = 0", values: [-4, 4], display: "x1 = −4  ;  x2 = 4" },
+  { id: "q3", eq: "x² + 25 = 0", special: "ninguna" },
+  { id: "q4", eq: "4x² − 12x + 9 = 0", values: [1.5], display: "x = 3/2 (raíz doble)" },
+  { id: "q5", eq: "x² − 5x + 6 = 0", values: [2, 3], display: "x1 = 2  ;  x2 = 3" },
+  { id: "q6", eq: "2x² + 3x + 7 = 0", special: "ninguna" },
+  { id: "q7", eq: "3x² + 7x − 2 = 0", values: [-2.591, 0.257], display: "x1 = (−7−√73)/6 ≈ −2,59  ;  x2 = (−7+√73)/6 ≈ 0,26" },
+  { id: "q8", eq: "x² − 2x = −10", special: "ninguna" },
+  { id: "q9", eq: "4x² − 24x = −36", values: [3], display: "x = 3 (raíz doble)" },
+];
+
+// ---------- Helpers ----------
+
+function parseNum(raw) {
+  let s = String(raw).trim().toLowerCase();
+  s = s.replace(/−/g, "-");
+  s = s.replace(/^x\s*[12]?\s*=\s*/, "");
+  s = s.replace(/\s+/g, "");
+  s = s.replace(",", ".");
+  if (s.includes("/")) {
+    const parts = s.split("/");
+    const n = parseFloat(parts[0]);
+    const d = parseFloat(parts[1]);
+    if (!isNaN(n) && !isNaN(d) && d !== 0) return n / d;
+    return NaN;
+  }
+  return parseFloat(s);
+}
+
+function checkLinearAnswer(item, raw) {
+  const s = String(raw).trim().toLowerCase();
+  if (item.special === "todos") return /todos|cualquier|infinit/.test(s);
+  if (item.special === "ninguna") return /no tiene|ningun|sin soluci|no hay|no existe/.test(s);
+  const v = parseNum(raw);
+  if (isNaN(v)) return false;
+  return Math.abs(v - item.value) < 0.03;
+}
+
+function linearAnswerDisplay(item) {
+  if (item.special === "todos") return "se cumple para todos los números reales (es una identidad)";
+  if (item.special === "ninguna") return "no tiene solución (nunca se cumple)";
+  return "x = " + item.display;
+}
+
+function checkQuadAnswer(item, raw) {
+  const s = String(raw).trim().toLowerCase();
+  if (item.special === "ninguna") return /no tiene|ningun|sin soluci|no hay|no real|no existe/.test(s);
+  const parts = s.split(/[,;]+| y /).map((p) => p.trim()).filter(Boolean);
+  const nums = parts.map(parseNum).filter((n) => !isNaN(n));
+  const deduped = [];
+  nums.forEach((n) => {
+    if (!deduped.some((d) => Math.abs(d - n) < 0.05)) deduped.push(n);
+  });
+  if (deduped.length !== item.values.length) return false;
+  const used = new Array(deduped.length).fill(false);
+  for (const cv of item.values) {
+    let found = -1;
+    for (let i = 0; i < deduped.length; i++) {
+      if (!used[i] && Math.abs(deduped[i] - cv) < 0.05) {
+        found = i;
+        break;
+      }
+    }
+    if (found === -1) return false;
+    used[found] = true;
+  }
+  return true;
+}
+
+function quadAnswerDisplay(item) {
+  if (item.special === "ninguna") return "no tiene solución real";
+  return item.display;
+}
+
+function labelFor(s) {
+  const map = { N: "ℕ", Z: "ℤ", Q: "ℚ", I: "𝕀", R: "ℝ" };
+  return map[s];
+}
+
+// ---------- Componentes de pregunta ----------
+
+function MultipleChoice({ id, prompt, options, correctIndex, explanation, setResult }) {
+  const [selected, setSelected] = useState(null);
+  const [checked, setChecked] = useState(false);
+
+  const handleSelect = (i) => { setSelected(i); setChecked(false); };
+  const handleCheck = () => {
+    if (selected === null) return;
+    setChecked(true);
+    setResult(id, selected === correctIndex);
+  };
+
+  return (
+    <div className="q-card">
+      <p className="q-prompt">{prompt}</p>
+      <div className="options-list">
+        {options.map((opt, i) => {
+          let cls = "opt-default";
+          if (checked) {
+            if (i === correctIndex) cls = "opt-correct";
+            else if (i === selected) cls = "opt-incorrect";
+            else cls = "opt-dim";
+          } else if (selected === i) {
+            cls = "opt-selected";
+          }
+          return (
+            <button key={i} className={"option-btn " + cls} onClick={() => handleSelect(i)}>
+              {opt}
+            </button>
+          );
+        })}
+      </div>
+      <div className="btn-row">
+        <button className="btn-primary" onClick={handleCheck} disabled={selected === null}>
+          ✓ Verificar
+        </button>
+        {checked && (
+          <span className={"feedback " + (selected === correctIndex ? "feedback-ok" : "feedback-bad")}>
+            {selected === correctIndex ? <IconCheck size={16} /> : <IconX size={16} />}
+            {selected === correctIndex ? "¡Correcto!" : 'Correcta: "' + options[correctIndex] + '"'}
+          </span>
+        )}
+      </div>
+      {checked && explanation && <p className="explain-text">{explanation}</p>}
+    </div>
+  );
+}
+
+function SetClassification({ id, label, correctSets, setResult }) {
+  const allSets = ["N", "Z", "Q", "I", "R"];
+  const [selected, setSelected] = useState([]);
+  const [checked, setChecked] = useState(false);
+
+  const toggle = (s) => {
+    setSelected((prev) => (prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s]));
+    setChecked(false);
+  };
+
+  const handleCheck = () => {
+    const ok = selected.length === correctSets.length && selected.every((s) => correctSets.includes(s));
+    setChecked(true);
+    setResult(id, ok);
+  };
+
+  const isOk = selected.length === correctSets.length && selected.every((s) => correctSets.includes(s));
+
+  return (
+    <div className="q-card">
+      <div style={{ marginBottom: 12 }}>
+        <span className="set-label">{label}</span>
+      </div>
+      <div className="toggle-row">
+        {allSets.map((s) => {
+          const active = selected.includes(s);
+          let cls = active ? "tg-active" : "tg-off";
+          if (checked) {
+            const shouldBe = correctSets.includes(s);
+            if (shouldBe && active) cls = "tg-correct-on";
+            else if (shouldBe && !active) cls = "tg-correct-off";
+            else if (!shouldBe && active) cls = "tg-wrong-on";
+            else cls = "tg-dim";
+          }
+          return (
+            <button key={s} className={"toggle-btn " + cls} onClick={() => toggle(s)}>
+              {labelFor(s)}
+            </button>
+          );
+        })}
+      </div>
+      <div className="btn-row">
+        <button className="btn-primary" onClick={handleCheck} disabled={selected.length === 0}>
+          ✓ Verificar
+        </button>
+        {checked && (
+          <span className={"feedback " + (isOk ? "feedback-ok" : "feedback-bad")}>
+            {isOk ? <IconCheck size={16} /> : <IconX size={16} />}
+            {isOk ? "¡Correcto!" : "Pertenece a: " + correctSets.map(labelFor).join(", ")}
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function NumericAnswer({ id, prompt, checkFn, answerDisplay, setResult }) {
+  const [value, setValue] = useState("");
+  const [checked, setChecked] = useState(false);
+  const [isCorrect, setIsCorrect] = useState(false);
+
+  const handleCheck = () => {
+    const ok = checkFn(value);
+    setIsCorrect(ok);
+    setChecked(true);
+    setResult(id, ok);
+  };
+
+  const cardCls = checked ? (isCorrect ? "ic-correct" : "ic-incorrect") : "ic-default";
+  const inputCls = checked ? (isCorrect ? "ti-correct" : "ti-incorrect") : "";
+
+  return (
+    <div className={"input-card " + cardCls}>
+      <p className="eq-prompt">{prompt}</p>
+      <div className="input-row">
+        <input
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+          placeholder="x = ..."
+          className={"text-input " + inputCls}
+        />
+        <button className="btn-primary" onClick={handleCheck} disabled={!value.trim()}>
+          ✓ Verificar
+        </button>
+      </div>
+      {checked && (
+        <div className={"input-feedback " + (isCorrect ? "feedback-ok" : "feedback-bad")}>
+          {isCorrect ? <IconCheck size={18} /> : <IconX size={18} />}
+          <span>{isCorrect ? "¡Correcto!" : "No es correcto. Respuesta: " + answerDisplay}</span>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ExerciseBlock({ number, emoji, title, subtitle, defaultOpen, children }) {
+  const [open, setOpen] = useState(!!defaultOpen);
+  return (
+    <div className="exercise-block">
+      <button className="exercise-header" onClick={() => setOpen(!open)}>
+        <span className="exercise-number">{number}</span>
+        <div className="exercise-title-wrap">
+          <h3 className="exercise-title">{emoji ? emoji + " " : ""}{title}</h3>
+          {subtitle && <p className="exercise-subtitle">{subtitle}</p>}
+        </div>
+        {open ? <IconChevronUp size={20} /> : <IconChevronDown size={20} />}
+      </button>
+      {open && <div className="exercise-body">{children}</div>}
+    </div>
+  );
+}
+
+function StatPill({ big, label }) {
+  return (
+    <div className="stat-pill">
+      <p className="stat-big">{big}</p>
+      <p className="stat-label">{label}</p>
+    </div>
+  );
+}
+
+function ScoreBar({ correctCount, answered, total, onReset }) {
+  const pct = total ? Math.round((correctCount / total) * 100) : 0;
+  const points = correctCount * 10;
+  return (
+    <div className="score-card">
+      <div className="score-left">
+        <span className="lightning">⚡</span>
+        <div>
+          <p className="score-points">{points} pts</p>
+          <p className="score-sub">{correctCount} / {total} correctas · {answered} respondidas</p>
+        </div>
+      </div>
+      <div className="progress-wrap">
+        <div className="progress-track">
+          <div className="progress-fill" style={{ width: pct + "%" }} />
+        </div>
+        <span className="progress-pct">{pct}%</span>
+      </div>
+      <button className="btn-reset" onClick={onReset}>
+        <IconRotate size={14} /> ↩ Reiniciar
+      </button>
+    </div>
+  );
+}
+
+function Tabs({ tab, setTab }) {
+  return (
+    <div className="tabs-row">
+      <button className={"tab-btn " + (tab === "tp2" ? "tab-active" : "tab-inactive")} onClick={() => setTab("tp2")}>
+        📘 TP N°2 — Números y operaciones
+      </button>
+      <button className={"tab-btn " + (tab === "tp3" ? "tab-active" : "tab-inactive")} onClick={() => setTab("tp3")}>
+        📗 TP N°3 — Ecuaciones
+      </button>
+    </div>
+  );
+}
+
+function TP2({ setResult }) {
+  return (
+    <div>
+      <ExerciseBlock number="1" emoji="🔢" title="Conjuntos numéricos" defaultOpen>
+        <div className="story-card">
+          <p className="story-text">
+            Imaginá que estás en un taller. No usás un martillo para apretar un tornillo, ni una pinza para medir un cable: en matemática pasa lo mismo, usamos diferentes "familias" de números según lo que necesitemos modelar en la realidad.
+          </p>
+          <ul className="story-list">
+            <li>🔩 Si contamos piezas de un motor, usamos <strong>Naturales</strong> (1, 2, 3...).</li>
+            <li>🌡️ Si medimos temperaturas bajo cero o deudas, necesitamos los <strong>Enteros</strong> (−3, −10...).</li>
+            <li>🔌 Si cortamos un cable a la mitad o hablamos de voltaje, usamos fracciones y decimales exactos: los <strong>Racionales</strong>.</li>
+            <li>⚙️ Si calculamos piezas circulares o curvas muy complejas, aparecen decimales infinitos y caóticos: los <strong>Irracionales</strong> (como π).</li>
+          </ul>
+          <p className="story-text">Todos ellos juntos forman el gran taller de los números <strong>Reales</strong>.</p>
+          <div className="story-callout">
+            <p className="mission-label">🧰 Tu misión</p>
+            <p className="story-text" style={{ marginTop: 6, marginBottom: 0 }}>Vamos a organizar nuestro inventario. Tenés la siguiente lista de números: tu tarea es ubicarlos en su "caja" correspondiente, marcando a qué conjunto pertenece cada uno.</p>
+          </div>
+        </div>
+        {clasifItems.map((item) => (
+          <SetClassification key={item.id} id={item.id} label={item.label} correctSets={item.sets} setResult={setResult} />
+        ))}
+      </ExerciseBlock>
+
+      <ExerciseBlock number="6" emoji="✅" title="¿Verdadero o falso?" subtitle="Elegí una opción y verificá">
+        {vfItems.map((item) => (
+          <MultipleChoice key={item.id} id={item.id} prompt={item.prompt} options={["Verdadero", "Falso"]} correctIndex={item.correct ? 0 : 1} explanation={item.explain} setResult={setResult} />
+        ))}
+      </ExerciseBlock>
+
+      <ExerciseBlock number="7" emoji="📏" title="Tipos de intervalo" subtitle="Identificá el tipo de cada intervalo">
+        {intervalItems.map((item) => (
+          <MultipleChoice key={item.id} id={item.id} prompt={item.prompt} options={item.options} correctIndex={item.correct} setResult={setResult} />
+        ))}
+      </ExerciseBlock>
+
+      <ExerciseBlock number="8" emoji="🔬" title="Notación científica" subtitle="Elegí la expresión correcta">
+        {notacionItems.map((item) => (
+          <MultipleChoice key={item.id} id={item.id} prompt={item.prompt} options={item.options} correctIndex={item.correct} setResult={setResult} />
+        ))}
+      </ExerciseBlock>
+    </div>
+  );
+}
+
+function TP3({ setResult }) {
+  return (
+    <div>
+      <ExerciseBlock number="1" emoji="🔤" title="Términos semejantes" defaultOpen>
+        <div className="story-card">
+          <p className="story-text">
+            El álgebra suele asustar porque pone letras donde solía haber números. Pero, en realidad, se inventó para ahorrar tiempo y escribir menos: es como usar abreviaturas o hacer un resumen.
+          </p>
+          <p className="story-text">
+            Imaginá que estás a cargo del inventario de un depósito. Alguien te da un reporte súper confuso que dice: "Llegaron 5 cajas de tornillos, luego se llevaron 8 cajas de tornillos, y al final alguien trajo 2 cajas de tornillos".
+          </p>
+          <p className="story-text">
+            En lugar de leer toda esa frase cada vez, la traducimos a un "idioma" más corto. Llamemos <em>x</em> a las "cajas de tornillos". La frase se traduce así:
+          </p>
+          <p className="equation-box">5x − 8x + 2x</p>
+          <p className="story-text">
+            ¿Ves? La letra <em>x</em> es solo un objeto. Y la operación de "reducir términos semejantes" no es más que limpiar tu escritorio de trabajo: si todos los términos hablan de lo mismo (cajas de tornillos), simplemente los agrupamos para saber el total.
+          </p>
+          <div className="story-callout">
+            <p className="mission-label">🧰 Tu misión</p>
+            <p className="story-text" style={{ marginTop: 6 }}>Resolvé esa pequeña línea de inventario:</p>
+            <p className="equation-box">5x − 8x + 2x</p>
+            <p className="mission-label" style={{ marginTop: 12 }}>Pasos para resolverlo:</p>
+            <ol className="steps-list">
+              <li>Pensá en la x como un objeto físico (cables, tornillos, horas de trabajo).</li>
+              <li>Hacé la cuenta solo con los números (tenés 5, te quitan 8, sumás 2).</li>
+              <li>Escribí el resultado final acompañando al objeto (x). ¿Cuántas "cajas" te quedaron a favor o en contra?</li>
+            </ol>
+          </div>
+          <p className="story-text" style={{ marginBottom: 0 }}>
+            ¡Y listo! Acabás de reducir una expresión algebraica: estás traduciendo un problema desordenado a una versión mucho más simple y lista para ser resuelta.
+          </p>
+        </div>
+        {terminosItems.map((item) => (
+          <MultipleChoice key={item.id} id={item.id} prompt={item.expr} options={item.options} correctIndex={item.correct} setResult={setResult} />
+        ))}
+      </ExerciseBlock>
+
+      <ExerciseBlock number="2" emoji="➗" title="Ecuaciones lineales" subtitle="Resolvé y escribí el valor de x (fracciones tipo 7/2 o decimales con punto o coma)">
+        {linearItems.map((item) => (
+          <NumericAnswer key={item.id} id={item.id} prompt={item.eq} checkFn={(v) => checkLinearAnswer(item, v)} answerDisplay={linearAnswerDisplay(item)} setResult={setResult} />
+        ))}
+      </ExerciseBlock>
+
+      <ExerciseBlock number="3" emoji="🔧" title="Despejar la incógnita indicada">
+        {despejarItems.map((item) => (
+          <MultipleChoice key={item.id} id={item.id} prompt={item.prompt} options={item.options} correctIndex={item.correct} setResult={setResult} />
+        ))}
+      </ExerciseBlock>
+
+      <ExerciseBlock number="4" emoji="📈" title="Ecuaciones cuadráticas" subtitle="Si hay dos soluciones, separalas con una coma. Si no tiene solución real, escribí 'no tiene solución'.">
+        {quadItems.map((item) => (
+          <NumericAnswer key={item.id} id={item.id} prompt={item.eq} checkFn={(v) => checkQuadAnswer(item, v)} answerDisplay={quadAnswerDisplay(item)} setResult={setResult} />
+        ))}
+      </ExerciseBlock>
+    </div>
+  );
+}
+
+const TOTAL = clasifItems.length + vfItems.length + intervalItems.length + notacionItems.length + terminosItems.length + linearItems.length + despejarItems.length + quadItems.length;
+
+function App() {
+  const [tab, setTab] = useState("tp2");
+  const [results, setResults] = useState({});
+
+  const setResult = (id, val) => setResults((prev) => ({ ...prev, [id]: val }));
+  const reset = () => setResults({});
+
+  const answered = Object.keys(results).length;
+  const correctCount = Object.values(results).filter(Boolean).length;
+
+  return (
+    <div className="page">
+      <div className="container">
+        <div className="header-banner">
+          <p className="header-tag">🧮 UTN INSPT · Matemática Ingresantes</p>
+          <h1 className="header-title">Seminario Nivelatorio de Matemática</h1>
+          <p className="header-sub">Practicá los Trabajos Prácticos N°2 y N°3 con corrección al instante</p>
+          <div className="stats-row">
+            <StatPill big="2" label="Prácticos" />
+            <StatPill big={TOTAL} label="Ejercicios" />
+            <StatPill big="⭐" label="Interactivo" />
+          </div>
+        </div>
+
+        <ScoreBar correctCount={correctCount} answered={answered} total={TOTAL} onReset={reset} />
+        <Tabs tab={tab} setTab={setTab} />
+        {tab === "tp2" ? <TP2 setResult={setResult} /> : <TP3 setResult={setResult} />}
+
+        <footer className="footer">
+          <div className="footer-header">
+            <span className="icon-badge">✉️</span>
+            <h2 className="footer-title">Contacto</h2>
+          </div>
+          <div className="footer-card">
+            <span className="icon-sm">📧</span>
+            <div>
+              <a href="mailto:matematica@inspt.utn.edu.ar" className="footer-email">matematica@inspt.utn.edu.ar</a>
+              <p className="footer-cat">Cátedra de Matemática — UTN INSPT · Ingresantes</p>
+            </div>
+          </div>
+          <p className="footer-bottom">UTN INSPT · Matemática para Ingresantes.</p>
+        </footer>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+</script>
+</body>
+</html>
